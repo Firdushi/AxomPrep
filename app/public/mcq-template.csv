@@ -1,0 +1,3 @@
+question_en,question_as,option_a,option_b,option_c,option_d,correct_index,explanation_en,explanation_as,category_slug,difficulty
+"What is the SI unit of force?","বলৰ SI একক কি?","Joule","Newton","Watt","Pascal",1,"Newton is the SI unit of force.","Newton হৈছে বলৰ SI একক।","physics","easy"
+"Which planet is known as the Red Planet?","কোনটো গ্ৰহক ৰঙা গ্ৰহ বুলি কোৱা হয়?","Earth","Mars","Jupiter","Venus",1,"Mars is commonly called the Red Planet.","Mars-ক ৰঙা গ্ৰহ বুলি কোৱা হয়।","general-science","easy"
