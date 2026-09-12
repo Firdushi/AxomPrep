@@ -1,141 +1,57 @@
-import Link from "next/link";
-import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default async function Dashboard() {
-  const { user, profile } = await requireUser();
+export default async function GK() {
   const supabase = await createClient();
 
-  const { data: attemptsData } = await supabase
-    .from("attempts")
-    .select("id,score,total,submitted_at,tests(title_en,title_as)")
-    .eq("user_id", user!.id)
-    .order("submitted_at", { ascending: false })
-    .limit(10);
+  const { data: category } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("slug", "assam-gk")
+    .single();
 
-  const attempts = attemptsData ?? [];
+  const { data: notesData } = await supabase
+    .from("notes")
+    .select("slug,title_en,title_as,excerpt_en")
+    .eq("published", true)
+    .eq("category_id", category?.id ?? "");
 
-  const avg = attempts.length
-    ? Math.round(
-        attempts.reduce(
-          (a: number, x: any) =>
-            a + (x.total ? (x.score / x.total) * 100 : 0),
-          0
-        ) / attempts.length
-      )
-    : 0;
+  const notes = notesData ?? [];
 
   return (
     <div className="page">
       <div className="container">
-        <div className="section-head">
-          <div>
-            <span className="badge">STUDENT DASHBOARD</span>
-            <h1 className="page-title">
-              Welcome, {profile?.full_name || "Student"}.
-            </h1>
-            <p className="muted">
-              Your preparation activity in one place.
-            </p>
-          </div>
+        <span className="badge">ASSAM FOCUS</span>
 
-          <Link className="btn primary" href="/tests">
-            Take a test
-          </Link>
+        <h1 className="page-title">Assam GK</h1>
+
+        <p className="muted">
+          A dedicated area for Assam-focused general knowledge.
+        </p>
+
+        <div className="grid">
+          {notes.map((n: any) => (
+            <Link
+              href={`/notes/${n.slug}`}
+              className="card"
+              key={n.slug}
+            >
+              <h3>{n.title_en}</h3>
+              <p>{n.excerpt_en}</p>
+              <span className="small">{n.title_as}</span>
+            </Link>
+          ))}
         </div>
 
-        <div className="dashboard-grid">
-          <Metric label="Attempts" value={attempts.length} />
-          <Metric label="Average score" value={`${avg}%`} />
-          <Metric label="Role" value={profile?.role || "user"} />
-          <Metric
-            label="Language"
-            value={
-              profile?.preferred_language === "as"
-                ? "অসমীয়া"
-                : "English"
-            }
-          />
-        </div>
-
-        <section className="section">
-          <div className="section-head">
-            <div>
-              <h2>Recent attempts</h2>
-              <p className="muted">
-                Your latest mock-test results.
-              </p>
-            </div>
+        {!notes.length && (
+          <div className="empty">
+            Assam GK content will appear here after the admin
+            publishes it.
           </div>
-
-          {attempts.length ? (
-            <div className="table-wrap">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Test</th>
-                    <th>Score</th>
-                    <th>Date</th>
-                    <th>Result</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {attempts.map((a: any) => (
-                    <tr key={a.id}>
-                      <td>{a.tests?.title_en}</td>
-                      <td>
-                        {a.score}/{a.total}
-                      </td>
-                      <td>
-                        {a.submitted_at
-                          ? new Date(
-                              a.submitted_at
-                            ).toLocaleDateString()
-                          : "—"}
-                      </td>
-                      <td>
-                        <span className="badge">
-                          {a.total
-                            ? Math.round(
-                                (a.score / a.total) * 100
-                              )
-                            : 0}
-                          %
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="empty">
-              No attempts yet.{" "}
-              <Link href="/tests">
-                Take your first mock test →
-              </Link>
-            </div>
-          )}
-        </section>
+        )}
       </div>
-    </div>
-  );
-}
-
-function Metric({
-  label,
-  value,
-}: {
-  label: string;
-  value: any;
-}) {
-  return (
-    <div className="metric">
-      <strong>{value}</strong>
-      <span>{label}</span>
     </div>
   );
 }
