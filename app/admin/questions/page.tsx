@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { AdminNav } from "../page";
+import DeleteQuestionButton from "./DeleteQuestionButton";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,9 @@ export default async function Questions() {
     .select(
       "id,question_en,question_as,difficulty,created_at,categories(name_en)"
     )
-    .order("created_at", { ascending: false });
+    .order("created_at", {
+      ascending: false,
+    });
 
   const qs = qsData ?? [];
 
@@ -103,14 +106,20 @@ export default async function Questions() {
                     </td>
 
                     <td>
+                      <div className="actions">
 
-                      <Link
-                        className="btn"
-                        href={`/admin/questions/${q.id}/edit`}
-                      >
-                        Edit
-                      </Link>
+                        <Link
+                          className="btn"
+                          href={`/admin/questions/${q.id}/edit`}
+                        >
+                          Edit
+                        </Link>
 
+                        <DeleteQuestionButton
+                          id={q.id}
+                        />
+
+                      </div>
                     </td>
 
                   </tr>
