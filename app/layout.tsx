@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "AxomPrep Pro | Assam Study Platform",
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <div><span>Notes</span><span>Mock Tests</span><span>Assam GK</span><span>Current Affairs</span></div>
           </div>
         </footer>
+        <SpeedInsights />
       </body>
     </html>
   );
