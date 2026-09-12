@@ -1,0 +1,11 @@
+question_en
+question_as
+option_a
+option_b
+option_c
+option_d
+correct_index
+explanation_en
+explanation_as
+category_slug
+difficulty
